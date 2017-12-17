@@ -7,3 +7,6 @@
 [submodule "lib\\Adafruit_LIS3DH"]
 	path = lib\\Adafruit_LIS3DH
 	url = https://github.com/bergeltt/Adafruit_LIS3DH.git
+[submodule "lib\\AssetTracker"]
+	path = lib\\AssetTracker
+	url = https://github.com/bergeltt/AssetTracker.git
