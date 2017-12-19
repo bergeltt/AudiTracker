@@ -1,5 +1,5 @@
 /*
- * Project AssetTrackerTest
+ * Project AudiTracker
  * Description:
  * Author:
  * Date:
@@ -178,7 +178,6 @@ boolean isPublishing()
 		lastGoodPosStr[x] = "Uninitialized";
 	}
 
-	Particle.function("enablePub", enablePublish);
 	Particle.function("pubBatt", publishBatteryStatus);
 	Particle.function("setGpsRate", setGpsRate);
 	Particle.function("publishNow", publishNow);
