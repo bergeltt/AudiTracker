@@ -10,3 +10,6 @@
 [submodule "lib\\AssetTracker"]
 	path = lib\\AssetTracker
 	url = https://github.com/bergeltt/AssetTracker.git
+[submodule "lib\\FISBlocks"]
+	path = lib\\FISBlocks
+	url = https://github.com/bergeltt/FISBlocks.git
