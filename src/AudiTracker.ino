@@ -9,6 +9,8 @@
 SYSTEM_MODE(SEMI_AUTOMATIC)
 
 #include "AssetTracker.h"
+#include "KWP.h"
+#include "FISLib.h"
 
 AssetTracker tracker = AssetTracker();
 
