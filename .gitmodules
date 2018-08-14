@@ -13,3 +13,6 @@
 [submodule "lib\\FISBlocks"]
 	path = lib\\FISBlocks
 	url = https://github.com/bergeltt/FISBlocks.git
+[submodule "lib/SparkFun_SX1509_Arduino_Library"]
+	path = lib/SparkFun_SX1509_Arduino_Library
+	url = https://github.com/bergeltt/SparkFun_SX1509_Arduino_Library.git
