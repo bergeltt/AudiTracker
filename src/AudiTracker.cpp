@@ -126,15 +126,15 @@ void updatePosition()
 
 void updateAcceleration()
 {
-	/* int x, y, z;
-	tracker.readXYZ(x, y, z);
+	int x, y, z;
+	tracker.readXYZ(&x, &y, &z);
 
 	int curAccelMagnitude = sqrt((x*x)+(y*y)+(z*z));
 	if (maxUnPubAccelMag < curAccelMagnitude)
 	{
 		maxUnPubAccelMag = curAccelMagnitude;
 		accelStr[UpdateBuffers_Current] = String::format("%d,%d,%d", x, y, z);
-	}*/
+	}
 }
 
 boolean publishLocationIfDirty()
@@ -208,7 +208,7 @@ void setup()
 
 	//function names are max of 12 letters
 	Particle.function("pubBattery", publishBatteryStatus);
-	//Particle.function("setGpsRate", setGpsRate);
+	Particle.function("setGpsRate", setGpsRate);
 	Particle.function("pubLocNow", publishLocationNow);
 	Particle.variable("pubRateSec", &publishRateSec, INT);
 
