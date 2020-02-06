@@ -1,3 +1,9 @@
+/******************************************************/
+//       THIS IS A GENERATED FILE - DO NOT EDIT       //
+/******************************************************/
+
+#include "application.h"
+#line 1 "c:/Users/tony/Documents/Particle/AudiTracker/src/AudiTracker.ino"
 /*
  * Project AudiTracker
  * Description:
@@ -6,6 +12,19 @@
  */
 
 // hold off connecting to cell/network/cloud. See below.
+boolean isPublishing();
+int setGpsRate(String command);
+int publishLocationNow(String command);
+int publishBatteryStatus(String command);
+void updatePosition();
+void updateAcceleration();
+boolean publishLocationIfDirty();
+int connectRelay(String command);
+int disconnectRelay(String command);
+void doUpdates();
+void setup();
+void loop();
+#line 9 "c:/Users/tony/Documents/Particle/AudiTracker/src/AudiTracker.ino"
 SYSTEM_MODE(MANUAL)
 
 #include "RelayController.h"

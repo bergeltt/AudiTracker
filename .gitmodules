@@ -1,18 +1,18 @@
-[submodule "lib\\Adafruit_GPS"]
-	path = lib\\Adafruit_GPS
-	url = https://github.com/bergeltt/Adafruit_GPS.git
 [submodule "lib\\Adafruit_Sensor"]
 	path = lib\\Adafruit_Sensor
 	url = https://github.com/bergeltt/Adafruit_Sensor.git
 [submodule "lib\\Adafruit_LIS3DH"]
 	path = lib\\Adafruit_LIS3DH
 	url = https://github.com/bergeltt/Adafruit_LIS3DH.git
-[submodule "lib\\AssetTracker"]
-	path = lib\\AssetTracker
-	url = https://github.com/bergeltt/AssetTracker.git
 [submodule "lib\\FISBlocks"]
 	path = lib\\FISBlocks
 	url = https://github.com/bergeltt/FISBlocks.git
-[submodule "lib/SparkFun_SX1509_Arduino_Library"]
-	path = lib/SparkFun_SX1509_Arduino_Library
+[submodule "lib/SparkFunSX1509"]
+	path = lib/SparkFunSX1509
 	url = https://github.com/bergeltt/SparkFun_SX1509_Arduino_Library.git
+[submodule "lib/AssetTracker2"]
+	path = lib/AssetTracker2
+	url = https://github.com/bergeltt/AssetTracker2.git
+[submodule "lib/UbloxM8Q_GPS"]
+	path = lib/UbloxM8Q_GPS
+	url = https://github.com/bergeltt/UbloxM8Q_GPS.git
