@@ -5,7 +5,14 @@
  * Date:
  */
 
-// hold off connecting to cell/network/cloud. See below.
+//need to add support for sleeping
+//enabling the accelerometer causes gps checksum errors
+//after enabling the accelerometer the readings just stay at zero
+//if I don't start the gps then I get non-zero accelerometer readings
+//internal or external gps antenna settings neither make the accelerometer return non zero
+//if I don't call begin on the relay controller the accelerometer still returns zeros
+
+//SYSTEM_THREAD(ENABLED)
 SYSTEM_MODE(MANUAL)
 
 #include "RelayController.h"
@@ -17,7 +24,7 @@ FuelGauge battery;
 RelayController relays = RelayController();
 AssetTracker2 tracker = AssetTracker2();
 
-boolean shouldPublishNow = false;
+boolean forcePublish = false;
 int publishRateSec = 60*60;
 unsigned long lastPublishMillis = 0;
 
@@ -35,7 +42,7 @@ int maxUnPubAccelMag = -1;
 
 boolean isPublishing()
 {
-	return shouldPublishNow || (publishRateSec > 0);
+	return forcePublish || (publishRateSec > 0);
 }
 
 // Allows changing the measurement rate
@@ -57,7 +64,7 @@ int publishLocationNow(String command)
 {
 	Serial.println("Publish now requested");
 
-	shouldPublishNow = true;
+	forcePublish = true;
 	lastPublishMillis = 0;
 	accelStr[UpdateBuffers_Last] = "Uninitialized";
 	posStr[UpdateBuffers_Last] = "Uninitialized";
@@ -110,7 +117,7 @@ void updateAcceleration()
 	int x, y, z;
 	tracker.readXYZ(&x, &y, &z);
 
-	int curAccelMagnitude = sqrt((x*x)+(y*y)+(z*z));
+	const int curAccelMagnitude = sqrt((x*x)+(y*y)+(z*z));
 	if (maxUnPubAccelMag < curAccelMagnitude)
 	{
 		maxUnPubAccelMag = curAccelMagnitude;
@@ -118,38 +125,51 @@ void updateAcceleration()
 	}
 }
 
+const unsigned int k_updatePeriod = 50;
+
 boolean publishLocationIfDirty()
 {
 	String eventData;
+	const char* comma = ", ";
+	const char* noComma = "";
 
-	if (shouldPublishNow
+	bool newDataToPublish = false;
+
+	eventData += String::format("%sPos: (%s)",  eventData.length() > 0 ? comma : noComma, posStr[UpdateBuffers_Current].c_str());
+
+	if (forcePublish
 		|| posStr[UpdateBuffers_Last] != posStr[UpdateBuffers_Current])
 	{
-		eventData += String::format("Pos: %s, ", posStr[UpdateBuffers_Current].c_str());
+		newDataToPublish = true;
 		posStr[UpdateBuffers_Last] = posStr[UpdateBuffers_Current];
 	}
 
-	if (shouldPublishNow
+	eventData += String::format("%sLastGoodPos: (%s)",  eventData.length() > 0 ? comma : noComma, lastGoodPosStr[UpdateBuffers_Current].c_str());
+
+	if (forcePublish
 		|| lastGoodPosStr[UpdateBuffers_Last] != lastGoodPosStr[UpdateBuffers_Current])
 	{
-		eventData += String::format("LastGoodPos: %s, ", lastGoodPosStr[UpdateBuffers_Current].c_str());
+		newDataToPublish = true;
 		lastGoodPosStr[UpdateBuffers_Last] = lastGoodPosStr[UpdateBuffers_Current];
 	}
 
-	if (shouldPublishNow
+	eventData += String::format("%sMaxAcc: (%s) AccelPeriod: %d",  eventData.length() > 0 ? comma : noComma, accelStr[UpdateBuffers_Current].c_str(), k_updatePeriod);
+
+	if (forcePublish
 		|| accelStr[UpdateBuffers_Last] != accelStr[UpdateBuffers_Current])
 	{
-		eventData += String::format("Accel: %s, ", accelStr[UpdateBuffers_Current].c_str());
+		newDataToPublish = true;
 		accelStr[UpdateBuffers_Last] = accelStr[UpdateBuffers_Current];
 		maxUnPubAccelMag = -1;
 	}
 
 	boolean published = false;
-	if (isPublishing() && eventData.length() > 0)
+	if (isPublishing() && newDataToPublish)
 	{
 		published |= Particle.publish("Loc", eventData, 60, PRIVATE);
-		Serial.println(eventData);
 	}
+	
+	Serial.println(eventData);
 
 	return published;
 }
@@ -170,7 +190,7 @@ void doUpdates()
 	updatePosition();
 	updateAcceleration();
 }
-Timer updateTimer(50, doUpdates);
+Timer updateTimer(k_updatePeriod, doUpdates);
 
 void setup()
 {
@@ -204,7 +224,7 @@ void setup()
     Serial.println("Setup Particle Relay Register End");
 
 	Serial.println("Setup Turning Accel On");
-	//tracker.turnOnAccel();
+	//tracker.begin();//start the accelerometer
 	Serial.println("Setup Turning GPS On");
 	tracker.gpsOn();
 	Serial.println("Setup Turning External GPS Antenna On");
@@ -222,16 +242,12 @@ void setup()
 
 void loop()
 {
-	if (shouldPublishNow || (isPublishing() && (millis() - lastPublishMillis > static_cast<size_t>(publishRateSec) * 1000)))
+	if (forcePublish || (isPublishing() && (millis() - lastPublishMillis > static_cast<size_t>(publishRateSec) * 1000)))
 	{
-		bool published = false;
-
-		published |= publishLocationIfDirty();
-
-		if (published)
+		if (publishLocationIfDirty())
 		{
 			lastPublishMillis = millis();
-			shouldPublishNow = false;
+			forcePublish = false;
 		}
 	}
 
